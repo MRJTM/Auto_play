@@ -1,46 +1,69 @@
-#include "char_match.h"
+ï»¿#include "char_match.h"
 #include "position.h"
 #include "find_chess.h"
+#include "USART.h"
 
+extern HANDLE com;//ä¸²å£æŒ‡ç¤ºå˜é‡
+extern OVERLAPPED OverLapped;
+Mat src1;
 
 int main()
 {
-	/*------------Í¨¹ıÉãÏñÍ·ÅÄÈ¡Ò»ÕÅÍ¼Æ¬-------------*/
-	//Mat src;
-	//VideoCapture inputVideo(0);
+	/*------------é€šè¿‡æ‘„åƒå¤´æ‹å–ä¸€å¼ å›¾ç‰‡-------------*/
+	Mat src;
+	VideoCapture inputVideo(0);
+	inputVideo.set(CV_CAP_PROP_FRAME_WIDTH, 1080);
+	inputVideo.set(CV_CAP_PROP_FRAME_HEIGHT, 960);
+	if (inputVideo.isOpened())//è‹¥æ‘„åƒå¤´æˆåŠŸæ‰“å¼€ï¼Œå°±è¯»å–ä¸€å¼ å›¾ç‰‡
+	{
+		cout << "æ‰“å¼€æ‘„åƒå¤´æˆåŠŸ" << endl;
+		inputVideo >> src;
+	/*	while (true)
+		{
+			inputVideo >> src;
+			imshow("æ‹åˆ°çš„æ£‹ç›˜", src);
+			waitKey(30);
+		}*/
+	}
+	else
+	{
+		cout << "æ‰“å¼€æ‘„åƒå¤´å¤±è´¥" << endl;
+		system("pause");
+		return 1;
+	}
+	src1 = Mat::zeros(639, 865, CV_8UC1);
+	resize(src, src1, src1.size());
+	cout << "å›¾åƒçš„å°ºå¯¸æ˜¯ï¼š" << src1.cols<<" "<<src1.rows<< endl;
+	imshow("æ‹åˆ°çš„æ£‹ç›˜", src1);
 
-	//if (inputVideo.isOpened())//ÈôÉãÏñÍ·³É¹¦´ò¿ª£¬¾Í¶ÁÈ¡Ò»ÕÅÍ¼Æ¬
-	//{
-	//	inputVideo >> src;
-	//}
-	//src = src(Rect(80,350, 1840, 1850));
+	/*------------åˆ©ç”¨ç°æˆå›¾ç‰‡è¿›è¡Œæµ‹è¯•---------------*/
+	/*Mat src = imread("æ£‹ç›˜.jpg");
+	imshow("æ‹åˆ°çš„æ£‹ç›˜", src);
+	cout << "å›¾åƒçš„å°ºå¯¸æ˜¯ï¼š" << src.cols<<" "<<src.rows<< endl;*/
 
-	/*------------ÀûÓÃÏÖ³ÉÍ¼Æ¬½øĞĞ²âÊÔ---------------*/
-	Mat src = imread("ÆåÅÌ.jpg");
-	imshow("ÅÄµ½µÄÆåÅÌ", src);
-	
-
-	/*-------------É¨ÃèÆåÅÌ£¬¶ÁÈ¡ÆåÅÌÑ°ÕÒÆåÅÌÉÏµÄÔ²---------------*/
+	/*-------------æ‰«ææ£‹ç›˜ï¼Œè¯»å–æ£‹ç›˜å¯»æ‰¾æ£‹ç›˜ä¸Šçš„åœ†---------------*/
 	
 	Mat mid;
-	cvtColor(src, mid, COLOR_BGR2GRAY);
+	cvtColor(src1, mid, COLOR_BGR2GRAY);
 	vector<Vec3f> circles;
 	circles = find_chess(mid);
 	
 
-	/*--------------Ê¶±ğÆå×Ó£¬²¢È·¶¨µ±Ç°×ø±êºÍÖÕµã×ø±ê---------------*/
-	//µ¼Èë×Ö¿â
+	/*--------------è¯†åˆ«æ£‹å­ï¼Œå¹¶ç¡®å®šå½“å‰åæ ‡å’Œç»ˆç‚¹åæ ‡---------------*/
+	//å¯¼å…¥å­—åº“
 	Mat char_lib[14];
 	load_char_lib(char_lib);
 
-	//¼ì²â³öÀ´µÄÃ¿¸öÔ²´ú±íÒ»¸öÆå×Ó£¬ÎÒĞèÒªÊ¶±ğ³öÃ¿¸öÆå×ÓÊÇÊ²Ã´
+	//æ£€æµ‹å‡ºæ¥çš„æ¯ä¸ªåœ†ä»£è¡¨ä¸€ä¸ªæ£‹å­ï¼Œæˆ‘éœ€è¦è¯†åˆ«å‡ºæ¯ä¸ªæ£‹å­æ˜¯ä»€ä¹ˆ
 	double score = 0;
-	Point src_position[32];	//¼ÇÂ¼Ã¿¸öÆå×ÓµÄÆğµã×ø±ê		
-	Point dst_position[32]; //¼ÇÂ¼Ã¿¸öÆå×ÓµÄÖÕµã×ø±ê
-
+	Point src_position[32];	//è®°å½•æ¯ä¸ªæ£‹å­çš„èµ·ç‚¹åæ ‡		
+	Point dst_position[32]; //è®°å½•æ¯ä¸ªæ£‹å­çš„ç»ˆç‚¹åæ ‡
 	get_position(mid, circles, char_lib, src_position, dst_position);
 
-	/*--------------¸ù¾İÆğµãÖÕµã×ø±ê£¬Í¨¹ı´®¿ÚÀ´¿ØÖÆ»úĞµ±Û°ÚÆå------------------*/
+	/*--------------æ ¹æ®èµ·ç‚¹ç»ˆç‚¹åæ ‡ï¼Œé€šè¿‡ä¸²å£æ¥æ§åˆ¶æœºæ¢°è‡‚æ‘†æ£‹------------------*/
+	/*æ‰“å¼€å’Œé…ç½®ä¸²å£:æ‰“å¼€ä¸²å£2ï¼Œæ³¢ç‰¹ç‡115200,è®¾å®šè¦å‘é€çš„æ£‹å­æ•°ï¼Œèµ·ç‚¹åæ ‡ï¼Œç»ˆç‚¹åæ ‡*/
+	int num_of_chess = circles.size();
+	Usart_Arm_Control("COM3", 115200, num_of_chess, src_position, dst_position);
 
 	waitKey(20170717);
 	return 0;

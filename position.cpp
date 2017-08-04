@@ -39,8 +39,9 @@ int calculate_position(int label, int key[])
 Point get_src_position(Point figure_position)
 {
 	Point src_position;
-	src_position.x = 2 * figure_position.x + 10;
-	src_position.y = 2 * figure_position.y + 10;
+	src_position.y = (int)(75.0 / 173 * figure_position.x + 27.6);
+	src_position.x = (int)(21.0 / 49 * figure_position.y - 135.86);
+	cout << "像素地址" << "x:" << figure_position.x << " " << "y" << figure_position.y << " ";
 	return src_position;
 }
 
@@ -65,14 +66,14 @@ void get_position(Mat src,vector<Vec3f> circles,Mat char_lib[],
 	{
 		/*获取棋子切片*/
 		Mat piece;
-		int r = 24;
+		int r = 23;
 		piece = src(Rect(circles[j][0] - r, circles[j][1] - r, 2 * r, 2 * r));
 
 		/*调整切片的大小，方便进行匹配*/
 		Mat dst_piece = Mat::zeros(150, 150, CV_8UC1);
 		resize(piece, dst_piece, dst_piece.size());
 		//imshow(piece_name[j], dst_piece);
-		//imwrite(piece_name1[j], dst_piece);
+		imwrite(piece_name1[j], dst_piece);
 
 		/*识别棋子切片属于什么棋子*/
 		double minsocre = 100;
@@ -94,11 +95,12 @@ void get_position(Mat src,vector<Vec3f> circles,Mat char_lib[],
 		int index = calculate_position(label, key);
 		dst_position[j] = get_dst_position(index);
 		cout << ":" << index << "  ";
-		cout << "dst_position" << dst_position[j] << endl;
+		cout << "dst_position" << dst_position[j] <<" ";
 
 		/*计算棋子的起点坐标*/
 		Point center(cvRound(circles[j][0]), cvRound(circles[j][1]));
-		//src_position[j] = grt_src_position(center);
+		src_position[j] = get_src_position(center);
+		cout << "src_position" << src_position[j] << endl;
 
 	}
 }

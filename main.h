@@ -5,7 +5,10 @@
 #include <opencv2/xfeatures2d/nonfree.hpp>
 
 #include <iostream>
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <Windows.h>
+#include <WinBase.h>
 
 using namespace std;
 using namespace cv;
