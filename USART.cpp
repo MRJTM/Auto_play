@@ -158,22 +158,26 @@ void Usart_Arm_Control(char* port_name, int bitrate, int num_of_chess, Point src
 	if (Openflag)
 	{
 		printf("打开串口成功！\n");
-		if (SetUsart(bitrate))
+		if (SetUsart(bitrate))//若配置串口成功就发送数据
 		{
 			printf("配置串口成功！\n");
 			int src_x, src_y, dst_x, dst_y;
 
 			for (int i = 0; i < num_of_chess; i++)
 			{
+				//设置要发送的内容
 				src_x = src_position[i].x;
 				src_y = src_position[i].y;
 				dst_x = dst_position[i].x;
 				dst_y = dst_position[i].y;
-				
 				char data[24] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'\n' };
 				sprintf(data, "%s%s%d%s%d%s%d%s%d&", "a1", "x", src_x, "y", src_y, "X", dst_x, "Y", dst_y);
+				
+				//发送数据
 				DWORD dwWrittenLen = 0;
 				flag_send = USART_send(data, 24, com);
+
+				//检测是否发送成功
 				if (flag_send)
 				{
 					cout << "棋子" << i << "坐标发送成功" << endl;
@@ -182,6 +186,8 @@ void Usart_Arm_Control(char* port_name, int bitrate, int num_of_chess, Point src
 				{
 					cout << "棋子" << i << "坐标发送失败" << endl;
 				}
+
+				//每次操作延时5秒
 				Sleep(5000);
 			}
 		}

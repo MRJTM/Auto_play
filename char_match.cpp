@@ -19,11 +19,11 @@ double calculate_similarity(Mat A, Mat B)
 	vector<DMatch>matches;
 	matcher.match(descrpA, descrpB, matches);
 
+	//将matches中的特征对按照距离从小到大排序
+	sort(matches.begin(), matches.end());
 
 	//计算相似程度
-	sort(matches.begin(), matches.end());//将matches中的特征对按照距离从小到大排序
-
-	int num_matches = 5;
+	int num_matches = 3;
 	double score_similarity = 0;
 	for (int j = 0; j < num_matches; j++)
 	{
@@ -33,6 +33,7 @@ double calculate_similarity(Mat A, Mat B)
 	return score_similarity*10/ num_matches;
 }
 
+//导入字库
 void load_char_lib(Mat char_lib[])
 {
 	char_lib[0] = imread("r_general.png", 0);	//红——帅
@@ -50,4 +51,12 @@ void load_char_lib(Mat char_lib[])
 	char_lib[11] = imread("b_horse.png", 0);	//黑——马
 	char_lib[12] = imread("b_cannon.png", 0);	//黑——砲
 	char_lib[13] = imread("b_solider.png", 0);	//黑——卒
+
+	//调整字库的大小
+	int char_lib_size =60;
+	for (int i = 0; i < 14; i++)
+	{
+		resize(char_lib[i], char_lib[i], Size(60,60));
+	}
+	
 }

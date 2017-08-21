@@ -1,5 +1,5 @@
 #include "find_chess.h"
-extern Mat src1;
+extern Mat src;
 vector<Vec3f> find_chess(Mat picture)
 {
 	/*利用霍夫变换寻找圆*/
@@ -12,10 +12,10 @@ vector<Vec3f> find_chess(Mat picture)
 	Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
 	int radius = cvRound(circles[i][2]);
 
-	//circle(src1, center, 3, Scalar(0, 255, 0), -1, 8, 0);
-	circle(picture, center, radius, Scalar(255, 255, 255), 12, 8, 0);
+	circle(picture, center, radius, Scalar(249, 249, 249), 16, 8, 0);
+	circle(src, center, radius, Scalar(0, 0, 255), 3, 8, 0);
 	}
-	imshow("寻找棋子效果图",picture);
+	imshow("寻找棋子效果图",src);
 
 	return circles;
 }
