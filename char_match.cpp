@@ -16,6 +16,7 @@ double calculate_similarity(Mat A, Mat B)
 
 	//使用暴力匹配方法，寻找特征点匹配对
 	BFMatcher matcher;
+	//FlannBasedMatcher matcher;
 	vector<DMatch>matches;
 	matcher.match(descrpA, descrpB, matches);
 
@@ -23,7 +24,7 @@ double calculate_similarity(Mat A, Mat B)
 	sort(matches.begin(), matches.end());
 
 	//计算相似程度
-	int num_matches = 3;
+	int num_matches = 5;
 	double score_similarity = 0;
 	for (int j = 0; j < num_matches; j++)
 	{

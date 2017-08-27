@@ -150,46 +150,40 @@ bool USART_send(char* WriteBuffer, DWORD dwSend, HANDLE Comm)    //BYTE *szWrite
 	return TRUE;
 }
 
-void Usart_Arm_Control(char* port_name, int bitrate, int num_of_chess, Point src_position[], Point dst_position[])
+bool Usart_Arm_Control(Point &src_position, Point &dst_position)
 {
-	bool Openflag = false;
 	bool flag_send = false;
+	int src_x, src_y, dst_x, dst_y;
+
+	//设置要发送的内容
+	src_x = src_position.x;
+	src_y = src_position.y;
+	dst_x = dst_position.x;
+	dst_y = dst_position.y;
+	char data[24] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'\n' };
+	sprintf(data, "%s%s%d%s%d%s%d%s%d&", "a1", "x", src_x, "y", src_y, "X", dst_x, "Y", dst_y);
+
+	//发送数据
+	DWORD dwWrittenLen = 0;
+	flag_send = USART_send(data, 24, com);
+
+	return flag_send;
+
+}
+
+int Open_Config_Usart(char* port_name, int bitrate)
+{
+	int flag_open_config_usart = 0;
+	bool Openflag = false;
 	Openflag = openPort(port_name);
 	if (Openflag)
 	{
 		printf("打开串口成功！\n");
-		if (SetUsart(bitrate))//若配置串口成功就发送数据
+		//若打开串口成功，再配置串口
+		if (SetUsart(bitrate))
 		{
 			printf("配置串口成功！\n");
-			int src_x, src_y, dst_x, dst_y;
-
-			for (int i = 0; i < num_of_chess; i++)
-			{
-				//设置要发送的内容
-				src_x = src_position[i].x;
-				src_y = src_position[i].y;
-				dst_x = dst_position[i].x;
-				dst_y = dst_position[i].y;
-				char data[24] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'\n' };
-				sprintf(data, "%s%s%d%s%d%s%d%s%d&", "a1", "x", src_x, "y", src_y, "X", dst_x, "Y", dst_y);
-				
-				//发送数据
-				DWORD dwWrittenLen = 0;
-				flag_send = USART_send(data, 24, com);
-
-				//检测是否发送成功
-				if (flag_send)
-				{
-					cout << "棋子" << i << "坐标发送成功" << endl;
-				}
-				else
-				{
-					cout << "棋子" << i << "坐标发送失败" << endl;
-				}
-
-				//每次操作延时5秒
-				Sleep(5000);
-			}
+			flag_open_config_usart = 1;
 		}
 		else
 		{
@@ -200,4 +194,5 @@ void Usart_Arm_Control(char* port_name, int bitrate, int num_of_chess, Point src
 	{
 		printf("打开串口失败！\n");
 	}
+	return flag_open_config_usart;
 }

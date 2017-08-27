@@ -4,7 +4,7 @@ vector<Vec3f> find_chess(Mat picture)
 {
 	/*利用霍夫变换寻找圆*/
 	vector<Vec3f> circles;
-	HoughCircles(picture, circles, HOUGH_GRADIENT, 1.5, 20, 200, 105, 20, 70);
+	HoughCircles(picture, circles, HOUGH_GRADIENT, 1.5, 20, 200, 80, 20, 43);
 
 	/*画出图中的圆，显示识别效果*/
 	for (size_t i=0;i<circles.size();i++)
