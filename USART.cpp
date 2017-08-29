@@ -162,10 +162,14 @@ bool Usart_Arm_Control(Point &src_position, Point &dst_position)
 	dst_y = dst_position.y;
 	char data[24] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'\n' };
 	sprintf(data, "%s%s%d%s%d%s%d%s%d&", "a1", "x", src_x, "y", src_y, "X", dst_x, "Y", dst_y);
-
+	int dataLength = 0;
+	for (int i = 0; i < 24; ++i)
+	{
+		if (data[i] == '&')
+			dataLength = i;
+	}
 	//·¢ËÍÊý¾Ý
-	DWORD dwWrittenLen = 0;
-	flag_send = USART_send(data, 24, com);
+	flag_send = USART_send(data, dataLength, com);
 
 	return flag_send;
 

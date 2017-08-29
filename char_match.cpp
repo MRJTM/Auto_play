@@ -24,7 +24,7 @@ double calculate_similarity(Mat A, Mat B)
 	sort(matches.begin(), matches.end());
 
 	//计算相似程度
-	int num_matches = 5;
+	int num_matches = 3;
 	double score_similarity = 0;
 	for (int j = 0; j < num_matches; j++)
 	{

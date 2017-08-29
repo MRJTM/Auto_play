@@ -12,28 +12,28 @@ int main()
 {
 
 	/*-----------------------打开配置摄像头，确保棋盘摆放位置正确---------------------*/
-	//Mat img;
-	//VideoCapture inputVideo(0);
-	////设置摄像头的分辨率为1080*960
-	//inputVideo.set(CV_CAP_PROP_FRAME_WIDTH, 1080);
-	//inputVideo.set(CV_CAP_PROP_FRAME_HEIGHT, 960);
-	//if (inputVideo.isOpened())//若打开摄像头成功
-	//{
-	//	cout << "打开摄像头成功" << endl;
-	//	cout << "等待棋盘摆放，确保四个角点都能看见...按回车继续..." << endl;
-	//	while (waitKey(30) != 13)
-	//	{
-	//		inputVideo >> img;
-	//		imshow("拍到的棋盘", img);
-	//	}
+	Mat img;
+	VideoCapture inputVideo(0);
+	//设置摄像头的分辨率为1080*960
+	inputVideo.set(CV_CAP_PROP_FRAME_WIDTH, 1080);
+	inputVideo.set(CV_CAP_PROP_FRAME_HEIGHT, 960);
+	if (inputVideo.isOpened())//若打开摄像头成功
+	{
+		cout << "打开摄像头成功" << endl;
+		cout << "等待棋盘摆放，确保四个角点都能看见...按回车继续..." << endl;
+		while (waitKey(30) != 13)
+		{
+			inputVideo >> img;
+			imshow("拍到的棋盘", img);
+		}
 
-	//}
-	//else	//若打开摄像头失败
-	//{
-	//	cout << "打开摄像头失败" << endl;
-	//	system("pause");
-	//	return 1;
-	//}
+	}
+	else	//若打开摄像头失败
+	{
+		cout << "打开摄像头失败" << endl;
+		system("pause");
+		return 1;
+	}
 
 	/*-------------------------------打开配置串口---------------------------------*/
 	int flag_Usart = 0;
@@ -52,9 +52,9 @@ int main()
 
 
 	/*-----------------利用现成图片进行测试----------------------*/
-	Mat img = imread("Origin_board.jpg");
-	imshow("拍到的棋盘", img);
-	cout << "图像的尺寸是：" << img.cols << " " << img.rows << endl;
+	//Mat img = imread("Origin_board.jpg");
+	//imshow("拍到的棋盘", img);
+	//cout << "图像的尺寸是：" << img.cols << " " << img.rows << endl;
 
 	/*----------------------------棋盘矫正，获得标准棋盘----------------------------*/
 	int flag = 0;//判断是否矫正成功用的标志位
@@ -65,11 +65,20 @@ int main()
 	}
 	imshow("矫正的棋盘", src);
 
+
+
 	/*-------------扫描棋盘，读取棋盘寻找棋盘上的圆---------------*/
 	Mat mid;
 	cvtColor(src, mid, COLOR_BGR2GRAY);
 	vector<Vec3f> circles;
-	circles = find_chess(mid);
+	bool flag_find_chess = false;
+	flag_find_chess = find_chess(mid,circles);
+	if (flag_find_chess==false)
+	{
+		cout << "寻找棋子失败" << endl;
+		system("pause");
+		return 1;
+	}
 
 	/*-------------切片识别棋子，发送坐标，再找圆，识别，发送的循环-----------------*/
 	for(int i=0;i<circles.size();i++)
@@ -95,7 +104,7 @@ int main()
 		}
 
 		/*--------------延时3s，给机械臂充足时间动作------------------------*/
-		//Sleep(4000);
+		Sleep(4000);
 	}
 
 

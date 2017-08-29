@@ -48,8 +48,10 @@ int calculate_position(int label, int key[])
 Point get_src_position(Point figure_position)
 {
 	Point src_position;
-	src_position.y = (int)(6.0 / 19 * figure_position.x + 100.37);
-	src_position.x = (int)(139.0 / 428 * figure_position.y - 125.77);
+	float x = figure_position.x;
+	float y = figure_position.y;
+	src_position.y = (int)(-1.648e-5*x*x+0.2995*x+114.7);
+	src_position.x = (int)(-1.933e-7*y*y*y+2.714e-4*y*y+0.2033*y-114.3);
 	cout << "ÏñËØµØÖ·" << "x:" << figure_position.x;
 	cout << " " << "y:" << figure_position.y << "   ";
 	return src_position;

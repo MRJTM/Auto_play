@@ -1,6 +1,6 @@
 #ignore the X64 file
 x64/
-*.png
 *.jpg
+!Origin_board.jpg
 AutoPlay.vcxproj
 AutoPlay.vcxproj.filters
